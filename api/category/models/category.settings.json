@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "categories",
+  "info": {
+    "name": "category"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "node_color": {
+      "type": "string"
+    },
+    "max_size": {
+      "type": "decimal"
+    },
+    "min_size": {
+      "type": "decimal"
+    },
+    "height_area": {
+      "type": "decimal"
+    }
+  }
+}

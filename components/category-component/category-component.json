@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_category_component_category_components",
+  "info": {
+    "name": "category_component",
+    "icon": "ad"
+  },
+  "options": {},
+  "attributes": {
+    "category": {
+      "model": "category"
+    },
+    "order": {
+      "type": "integer"
+    }
+  }
+}
