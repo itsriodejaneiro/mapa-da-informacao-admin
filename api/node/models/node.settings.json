@@ -16,13 +16,10 @@
       "type": "string"
     },
     "title": {
-      "type": "text"
+      "type": "string"
     },
     "text": {
-      "type": "string"
-    },
-    "category": {
-      "type": "string"
+      "type": "text"
     },
     "x_position": {
       "type": "decimal"
@@ -32,6 +29,10 @@
     },
     "next_nodes": {
       "collection": "node"
+    },
+    "category": {
+      "model": "category",
+      "via": "nodes"
     }
   }
 }
