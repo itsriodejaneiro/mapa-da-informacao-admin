@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "maps",
+  "info": {
+    "name": "map"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "synopsis": {
+      "type": "text"
+    },
+    "project_cover": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
+    },
+    "category_component": {
+      "type": "component",
+      "repeatable": true,
+      "component": "category-component.category-component"
+    }
+  }
+}

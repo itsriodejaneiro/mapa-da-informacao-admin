@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "nodes",
+  "info": {
+    "name": "node",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "subtitle": {
+      "type": "string"
+    },
+    "title": {
+      "type": "text"
+    },
+    "text": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "x_position": {
+      "type": "decimal"
+    },
+    "y_position": {
+      "type": "decimal"
+    },
+    "next_nodes": {
+      "collection": "node"
+    }
+  }
+}
