@@ -16,7 +16,8 @@
       "type": "string"
     },
     "title": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "text": {
       "type": "text"
@@ -27,12 +28,12 @@
     "y_position": {
       "type": "decimal"
     },
-    "next_nodes": {
-      "collection": "node"
-    },
     "category": {
-      "model": "category",
-      "via": "nodes"
+      "via": "nodes",
+      "model": "category"
+    },
+    "slug": {
+      "type": "string"
     }
   }
 }
