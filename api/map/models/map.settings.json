@@ -2,7 +2,8 @@
   "kind": "collectionType",
   "collectionName": "maps",
   "info": {
-    "name": "map"
+    "name": "map",
+    "description": ""
   },
   "options": {
     "increments": true,
@@ -29,10 +30,10 @@
       "required": false,
       "pluginOptions": {}
     },
-    "category_component": {
+    "node_groups": {
       "type": "component",
       "repeatable": true,
-      "component": "category-component.category-component"
+      "component": "node-component.node-component"
     }
   }
 }
