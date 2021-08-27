@@ -2,7 +2,8 @@
   "collectionName": "components_category_component_category_components",
   "info": {
     "name": "category_component",
-    "icon": "ad"
+    "icon": "ad",
+    "description": ""
   },
   "options": {},
   "attributes": {
@@ -11,6 +12,14 @@
     },
     "order": {
       "type": "integer"
+    },
+    "nodes": {
+      "type": "component",
+      "repeatable": true,
+      "component": "node-component.node-component"
+    },
+    "slug": {
+      "type": "string"
     }
   }
 }
