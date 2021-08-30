@@ -28,10 +28,6 @@
     "y_position": {
       "type": "decimal"
     },
-    "category": {
-      "via": "nodes",
-      "model": "category"
-    },
     "slug": {
       "type": "string"
     }

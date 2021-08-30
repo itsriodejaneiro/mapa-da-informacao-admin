@@ -29,10 +29,6 @@
     },
     "height_area": {
       "type": "decimal"
-    },
-    "nodes": {
-      "via": "category",
-      "collection": "node"
     }
   }
 }
