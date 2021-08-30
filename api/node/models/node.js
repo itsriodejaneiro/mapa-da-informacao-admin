@@ -8,18 +8,7 @@
 
 async function setSlug(node) {
 
-
-    async function getCategoryTitle(id) {
-        if (id) {
-            const category = await strapi.services.category.findOne({ 'id': id })
-            if (category) {
-                return category.title
-            }
-        }
-        return null
-    }
-
-    node.slug = [await getCategoryTitle(node.category), node.title]
+    node.slug = [node.title, node.subtitle]
         .filter(element => element && element.length) // filter out null fields
         .join(' - ')
 
