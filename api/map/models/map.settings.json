@@ -30,10 +30,10 @@
       "required": false,
       "pluginOptions": {}
     },
-    "node_groups": {
+    "categories": {
       "type": "component",
       "repeatable": true,
-      "component": "node-component.node-component"
+      "component": "category-component.category-component"
     }
   }
 }

@@ -13,7 +13,7 @@
     "order": {
       "type": "integer"
     },
-    "nodes": {
+    "node_groups": {
       "type": "component",
       "repeatable": true,
       "component": "node-component.node-component"
