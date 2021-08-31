@@ -8,8 +8,8 @@
 
 async function setSlug(node) {
 
-    node.slug = [node.title, node.subtitle]
-        .filter(element => element && element.length) // filter out null fields
+    node.slug = [node.namespace, node.title, node.index]
+        .filter(element => element != null) // filter out null fields
         .join(' - ')
 
     return node

@@ -30,6 +30,12 @@
     },
     "slug": {
       "type": "string"
+    },
+    "namespace": {
+      "type": "string"
+    },
+    "index": {
+      "type": "integer"
     }
   }
 }
