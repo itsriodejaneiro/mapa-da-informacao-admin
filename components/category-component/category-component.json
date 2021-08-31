@@ -13,13 +13,11 @@
     "order": {
       "type": "integer"
     },
-    "node_groups": {
-      "type": "component",
-      "repeatable": true,
-      "component": "node-component.node-component"
-    },
     "slug": {
       "type": "string"
+    },
+    "nodes": {
+      "collection": "node"
     }
   }
 }
