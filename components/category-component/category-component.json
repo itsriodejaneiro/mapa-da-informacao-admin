@@ -7,9 +7,6 @@
   },
   "options": {},
   "attributes": {
-    "category": {
-      "model": "category"
-    },
     "order": {
       "type": "integer"
     },
@@ -18,6 +15,25 @@
     },
     "nodes": {
       "collection": "node"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "node_color": {
+      "type": "string"
+    },
+    "min_size": {
+      "type": "decimal"
+    },
+    "max_size": {
+      "type": "decimal"
+    },
+    "height_area": {
+      "type": "decimal"
     }
   }
 }
