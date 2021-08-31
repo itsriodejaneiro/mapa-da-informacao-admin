@@ -18,11 +18,11 @@ async function setSlug(map) {
         }
         return null
     }
-    async function getNodeTitle(id) {
+    async function getNodeTitle(id, field='title') {
         if (id) {
             const nodeFound = await strapi.services.node.findOne({ 'id': id })
             if (nodeFound) {
-                return nodeFound.title
+                return nodeFound[field]
             }
         }
         return null
@@ -63,6 +63,17 @@ async function setSlug(map) {
         })
 
     )
+
+    await Promise.all(
+        map.node_mapping?.map(async nodeMapping => {
+            const sourceTitle = await getNodeTitle(nodeMapping.source, 'slug')
+            const targetTitle = await getNodeTitle(nodeMapping.target, 'slug')
+    
+            nodeMapping.slug = [sourceTitle, targetTitle]
+                .filter(element => element != null)
+                .join(' -> ')
+        }))
+
     return map
 }
 

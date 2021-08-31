@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_node_component_node_mappings",
+  "info": {
+    "name": "node_mapping",
+    "icon": "arrows-alt-h",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "source": {
+      "model": "node"
+    },
+    "target": {
+      "model": "node"
+    },
+    "context": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string",
+      "private": true
+    }
+  }
+}
