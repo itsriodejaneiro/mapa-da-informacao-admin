@@ -12,10 +12,10 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "subtitle": {
+    "title": {
       "type": "string"
     },
-    "title": {
+    "label": {
       "type": "string",
       "required": true
     },
