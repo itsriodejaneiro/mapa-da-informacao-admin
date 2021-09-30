@@ -39,6 +39,9 @@
       "type": "component",
       "repeatable": true,
       "component": "node-component.node-mapping"
+    },
+    "url_map": {
+      "type": "string"
     }
   }
 }
