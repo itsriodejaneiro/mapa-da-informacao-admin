@@ -48,6 +48,22 @@
         "policies": []
       }
       
+    },
+    {
+      "method": "GET",
+      "path": "/drafts",
+      "handler": "map.drafts",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/drafts/:id",
+      "handler": "map.draft",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }
