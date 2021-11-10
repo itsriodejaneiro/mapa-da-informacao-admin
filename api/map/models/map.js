@@ -9,18 +9,11 @@
 async function setSlug(map) {
     // Create slugs for nodes for better Map admin usage
 
-    async function getCategoryTitle(id) {
-        if (id) {
-            const category = await strapi.services.category.findOne({ 'id': id })
-            if (category) {
-                return category.title
-            }
-        }
-        return null
-    }
+    const nodes = await strapi.query('node').find();
+    
     async function getNodeTitle(id, field='title') {
         if (id) {
-            const nodeFound = await strapi.services.node.findOne({ 'id': id })
+            const nodeFound = nodes.filter(node => node.id == id)[0]
             if (nodeFound) {
                 return nodeFound[field]
             }
@@ -33,8 +26,7 @@ async function setSlug(map) {
         await Promise.all(
             map?.categories?.map(async category => {
 
-                const categoryTitle = await getCategoryTitle(category.category)
-                category.slug = [category.order, categoryTitle]
+                category.slug = [category.order, category.title]
                     .filter(element => element != null)
                     .join(' - ')
 
