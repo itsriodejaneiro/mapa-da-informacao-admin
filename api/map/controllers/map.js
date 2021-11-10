@@ -14,15 +14,27 @@ module.exports = {
     // filter out published ones
     entities = entities.filter(map => map.published_at == null)
 
-    return entities.map(entity => sanitizeEntity(entity, { model: strapi.models.map }));
+    // return only id and title, omitting other info as it requires password 
+    return entities.map(map => {
+      return {
+        '_id': map._id,
+        'id': map.id,
+        'title': map.title
+      }
+    })
+    
   },
 
   async draft(ctx) {
     const { id } = ctx.params;
 
+    const password = ctx.query['password']
+
+
     let entities = await strapi.query('map').model.find();
 
-    const entity = entities.filter(map => map.id == id)[0]
+    // find by id, a map that has a password and match password
+    const entity = entities.filter(map => map.id == id && map.draft_password && map.draft_password == password)[0]
 
     return sanitizeEntity(entity, { model: strapi.models.map });
   },
