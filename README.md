@@ -23,7 +23,7 @@ All the required environment variables are declared on the `.env.example` in the
 1. Executing the project:
 
 ```sh
-$ cd mapa-da-informacao-api
+$ cd mapa-da-informacao-admin
 # Installing project dependencies.
 
 $ npm install # or yarn install
