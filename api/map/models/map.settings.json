@@ -8,7 +8,7 @@
   "options": {
     "increments": true,
     "timestamps": true,
-    "draftAndPublish": false
+    "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
@@ -39,6 +39,14 @@
       "type": "component",
       "repeatable": true,
       "component": "node-component.node-mapping"
+    },
+    "draft_password": {
+      "type": "password",
+      "private": true,
+      "minLength": 6
+    },
+    "url_map": {
+      "type": "string"
     }
   }
 }
