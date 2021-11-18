@@ -20,7 +20,7 @@
       "required": true
     },
     "text": {
-      "type": "text"
+      "type": "richtext"
     },
     "x_position": {
       "type": "decimal"
