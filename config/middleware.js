@@ -3,6 +3,9 @@ module.exports = ({ env }) => ({
         cache: {
             enabled: true,
             type: 'redis',
+            cacheTimeout: 400,
+            enableEtagSupport: true,
+            logs:true,
             models: [
                 {
                     model: 'map',
@@ -10,9 +13,7 @@ module.exports = ({ env }) => ({
                 }
             ],
             redisConfig: {
-                host: env('REDIS_HOST', '127.0.0.1'),
-                port: env('REDIS_PORT', 6379),
-                password: env('REDIS_PASSWORD', null)
+                uri: env('REDIS_URL', '127.0.0.1:6379') // default is local redis
             },
         }
 
