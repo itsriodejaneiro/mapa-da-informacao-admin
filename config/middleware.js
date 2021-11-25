@@ -10,7 +10,7 @@ module.exports = ({ env }) => ({
                 }
             ],
             redisConfig: {
-                uri: env('CACHING_URL', '127.0.0.1:6379') // default is local redis
+                uri: process.env.REDIS_URL
             },
         }
 
