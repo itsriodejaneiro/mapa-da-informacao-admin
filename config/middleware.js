@@ -2,16 +2,16 @@ module.exports = ({ env }) => ({
     settings: {
         cache: {
             enabled: true,
-            type: 'redis',
+            // type: 'redis',
             models: [
                 {
                     model: 'map',
                     hitpass: false
                 }
             ],
-            redisConfig: {
-                uri: process.env.REDIS_URL
-            },
+            // redisConfig: {
+            //     uri: process.env.REDIS_URL
+            // },
         }
 
     }
