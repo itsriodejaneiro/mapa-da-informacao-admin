@@ -47,6 +47,25 @@
     },
     "url_map": {
       "type": "string"
+    },
+    "title_seo": {
+      "type": "string"
+    },
+    "description_seo": {
+      "type": "text"
+    },
+    "site_name_seo": {
+      "type": "string"
+    },
+    "image_seo": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images"
+      ],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
     }
   }
 }
