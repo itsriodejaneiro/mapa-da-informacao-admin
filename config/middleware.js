@@ -1,7 +1,7 @@
 module.exports = ({ env }) => ({
     settings: {
         cache: {
-            enabled: false,
+            enabled: true,
             // type: 'redis',
             models: [
                 {
