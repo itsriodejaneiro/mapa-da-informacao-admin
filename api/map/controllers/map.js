@@ -17,6 +17,39 @@ function split_context(_map) {
   });
 }
 
+function populate_context(_map){
+  console.log('populate_context', _map.node_mapping.length)
+
+  // populate category.nodes with context from node_mapping 
+  _map.node_mapping.forEach(element => {
+    let source = element.source
+    let target = element.target
+    let context = element.context
+
+    if (context && context.length > 0){
+      // console.log('context', context)
+      // for each category
+      _map.categories.forEach(category => {
+        
+        // console.log('source', source._id, 'target', target._id)
+        // console.log(category.nodes.map(node => node._id))
+        // find respective nodes
+        category.nodes.forEach(node => {
+          if (String(node._id) == String(source._id) || String(node._id) == String(target._id)){
+            // populate
+            let node_context = node.context
+            if (node_context == undefined) 
+              node_context = []
+
+            // node.context = [...node_context, ...context]
+            node.context = [...new Set([...node_context, ...context])]
+          }
+        })
+      })
+    }
+  })
+}
+
 module.exports = {
 
   async find(ctx) {
@@ -29,6 +62,7 @@ module.exports = {
 
     entities.map(map => {
       split_context(map)
+      populate_context(map)
     })
     return entities.map(entity => sanitizeEntity(entity, { model: strapi.models.map }))
   },
@@ -38,6 +72,7 @@ module.exports = {
     let entity = await strapi.services.map.findOne({ id })
     entity = sanitizeEntity(entity, { model: strapi.models.map })
     split_context(entity)
+    populate_context(entity)
     return entity
   },
 
