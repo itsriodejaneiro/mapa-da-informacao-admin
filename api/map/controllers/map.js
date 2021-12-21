@@ -7,7 +7,40 @@ const { sanitizeEntity } = require('strapi-utils');
  * to customize this controller
  */
 
+function split_context(_map) {
+  return _map.node_mapping.forEach(element => {
+    if (element.context && element.context.length > 0){
+      let context = element.context.split(',')
+      context = context.map(item => item.trim())
+      element.context = context
+    }
+  });
+}
+
 module.exports = {
+
+  async find(ctx) {
+    let entities
+    if (ctx.query._q) {
+      entities = await strapi.services.map.search(ctx.query)
+    } else {
+      entities = await strapi.services.map.find(ctx.query)
+    }
+
+    entities.map(map => {
+      split_context(map)
+    })
+    return entities.map(entity => sanitizeEntity(entity, { model: strapi.models.map }))
+  },
+
+  async findOne(ctx) {
+    const { id } = ctx.params
+    let entity = await strapi.services.map.findOne({ id })
+    entity = sanitizeEntity(entity, { model: strapi.models.map })
+    split_context(entity)
+    return entity
+  },
+
   async drafts(ctx) {
     let entities = await strapi.query('map').model.find();
 
@@ -22,7 +55,7 @@ module.exports = {
         'title': map.title
       }
     })
-    
+
   },
 
   async draft(ctx) {
