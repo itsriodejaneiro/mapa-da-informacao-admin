@@ -15,9 +15,6 @@ class Map(models.Model):
     site_name_seo = models.CharField(max_length=50, blank=True, null=True, verbose_name='Nome do site SEO')
     image_seo = models.ImageField(upload_to='map/image_seo', blank=True, null=True, verbose_name='Imagem SEO')
     
-    # todo:
-    # categories
-    # node_mapping
 
     def __str__(self) -> str:
         return self.title if self.title else super().__str__()
