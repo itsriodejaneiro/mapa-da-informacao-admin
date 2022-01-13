@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+
 import environ
 
 env = environ.Env(
@@ -100,6 +102,19 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     )
 }
+
+# AWS S3
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID', default=None)
+
+if AWS_ACCESS_KEY_ID is not None:
+    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY', default=None)
+    AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME', default=None)
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+
+    DEFAULT_FILE_STORAGE = 'storage_backends.MediaStorage'
+else:
+    MEDIA_URL = os.environ.get('MEDIA_URL', '/media/')
+    MEDIA_ROOT = os.path.join(BASE_DIR, '.media')
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
