@@ -1,0 +1,1 @@
+web: gunicorn mapa_da_informacao_api.wsgi --keep-alive 5
