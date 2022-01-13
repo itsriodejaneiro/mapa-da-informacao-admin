@@ -13,9 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from contrib.router import HybridRouter
+from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 
+router = HybridRouter()
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include((router.urls, 'api'), namespace='api'), name='api-root'),
 ]
