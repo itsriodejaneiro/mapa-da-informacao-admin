@@ -17,8 +17,7 @@ class Node(models.Model):
     button_link = models.CharField(max_length=255, null=True, blank=True, verbose_name='Link do botão')
 
     def __str__(self) -> str:
-        str_array = list(filter(lambda s: s not in [None, ''] and s.strip(), [self.namespace, self.label, self.index]))    
-        return ' - '.join(str_array) if str_array else f'{self.title}' if self.title else super().__str__()
+        return self.title if self.title else super().__str__()
 
     class Meta:
         verbose_name = "Nó"

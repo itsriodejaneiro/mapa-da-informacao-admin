@@ -18,10 +18,12 @@ from contrib.router import HybridRouter
 from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
+from map.api import MapHybridRouter
 
 from mapa_da_informacao_api import settings
 
 router = HybridRouter()
+router.register_router(MapHybridRouter)
 
 urlpatterns = [
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
