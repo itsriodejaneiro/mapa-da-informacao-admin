@@ -5,7 +5,7 @@ class Category(models.Model):
     title = models.CharField(max_length=255, verbose_name='Título')
     description = models.TextField( verbose_name='Descrição')
     node_color = models.CharField(max_length=255, verbose_name='Cor do nó')
-    order = models.IntegerField(default=0, verbose_name='Ordem')
+    order = models.IntegerField(default=0, null=True, blank=True, verbose_name='Ordem')
 
     min_size = models.FloatField(null=True, blank=True, verbose_name='Tamanho mínimo')
     max_size = models.FloatField(null=True, blank=True, verbose_name='Tamanho máximo')

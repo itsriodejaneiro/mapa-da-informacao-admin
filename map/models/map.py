@@ -6,13 +6,13 @@ class Map(models.Model):
     project_cover = models.ImageField(upload_to='map/project_cover', verbose_name='Capa do projeto')
     
     # Drafting
-    draft_password = models.CharField(max_length=30, blank=True, null=True, verbose_name='Senha de rascunho')
-    url_map = models.CharField(max_length=50, blank=True, null=True, verbose_name='URL do mapa')
+    draft_password = models.CharField(max_length=255, blank=True, null=True, verbose_name='Senha de rascunho')
+    url_map = models.CharField(max_length=255, blank=True, null=True, verbose_name='URL do mapa')
     
     # Seo
-    title_seo = models.CharField(max_length=50, blank=True, null=True, verbose_name='Título SEO')
-    description_seo = models.CharField(max_length=50, blank=True, null=True, verbose_name='Descrição SEO')
-    site_name_seo = models.CharField(max_length=50, blank=True, null=True, verbose_name='Nome do site SEO')
+    title_seo = models.CharField(max_length=255, blank=True, null=True, verbose_name='Título SEO')
+    description_seo = models.CharField(max_length=255, blank=True, null=True, verbose_name='Descrição SEO')
+    site_name_seo = models.CharField(max_length=255, blank=True, null=True, verbose_name='Nome do site SEO')
     image_seo = models.ImageField(upload_to='map/image_seo', blank=True, null=True, verbose_name='Imagem SEO')
     
 
