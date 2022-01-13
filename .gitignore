@@ -157,3 +157,4 @@ sftp-config.json
 .temp/
 
 static
+staticfiles
