@@ -13,10 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import debug_toolbar
 from contrib.router import HybridRouter
 from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
+
+from mapa_da_informacao_api import settings
 
 router = HybridRouter()
 
@@ -25,3 +28,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include((router.urls, 'api'), namespace='api'), name='api-root'),
 ]
+
+if settings.DEBUG:
+    urlpatterns.extend([path('__debug__/', include(debug_toolbar.urls))])
