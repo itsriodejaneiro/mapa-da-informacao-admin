@@ -1,4 +1,5 @@
 from rest_framework import serializers, viewsets
+from rest_framework.permissions import AllowAny
 
 from ..models import Category, Map, Node, NodeMapping
 
@@ -38,4 +39,5 @@ class MapSerializer(serializers.ModelSerializer):
 
 class MapViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = MapSerializer
+    permission_classes = AllowAny,
     queryset = Map.objects.all().order_by('title').prefetch_related('node_mappings', 'node_mappings__source', 'node_mappings__target', 'categories', 'categories__nodes')
