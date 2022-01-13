@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'rest_framework',
 
+    'map',
+
 ]
 
 MIDDLEWARE = [
