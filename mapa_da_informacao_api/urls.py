@@ -21,6 +21,7 @@ from django.urls import path
 router = HybridRouter()
 
 urlpatterns = [
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('admin/', admin.site.urls),
     path('api/', include((router.urls, 'api'), namespace='api'), name='api-root'),
 ]

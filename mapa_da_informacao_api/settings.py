@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',
+    'oauth2_provider',
 
 ]
 
@@ -88,6 +89,14 @@ DATABASES = {
     'default': env.db()
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
