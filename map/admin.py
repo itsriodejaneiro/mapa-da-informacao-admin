@@ -1,16 +1,31 @@
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.urls import reverse
 from django.utils.html import escape, format_html
 from oauth2_provider.models import (AccessToken, Application, Grant,
                                     RefreshToken)
+
 from .models import Category, Map, Node, NodeMapping
-from django.utils.html import format_html
-from django.urls import reverse
 
 # Register your models here.
 
+# region Forms
+
+
+class MapModelForm(forms.ModelForm):
+    summary = forms.CharField(widget=forms.Textarea)
+
+    class Meta:
+        model = Map
+        fields = '__all__'
+
+
+# endregion
 
 # region Inlines
+
+
 class CategoryInline(admin.StackedInline):
     model = Category
     extra = 0
@@ -45,6 +60,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class MapAdmin(admin.ModelAdmin):
     list_display = 'title', 'categories_link', 'node_mapping_link', 'cover', 'title_seo', '_image_seo', 'site_name_seo',
     search_fields = 'title', 'synopsis'
+    form = MapModelForm
     # inlines = CategoryInline, NodeMappingInline,
 
     def cover(self, obj):

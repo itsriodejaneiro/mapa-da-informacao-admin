@@ -3,6 +3,7 @@ from django.db import models
 class Map(models.Model):
     title = models.CharField(max_length=255, verbose_name='Título')
     synopsis = models.TextField(verbose_name='Sinopse')
+    summary = models.CharField(max_length=500, null=True, blank=True, verbose_name='Resumo')
     project_cover = models.ImageField(upload_to='map/project_cover', verbose_name='Capa do projeto')
     
     # Drafting
