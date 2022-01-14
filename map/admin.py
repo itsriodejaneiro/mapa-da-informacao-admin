@@ -1,12 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from django.db.models.fields import CharField
 from django.utils.html import escape, format_html
 from oauth2_provider.models import (AccessToken, Application, Grant,
                                     RefreshToken)
-from django.db.models import Q, Value, F
-from django.db.models.functions import Concat
 from .models import Category, Map, Node, NodeMapping
+from django.utils.html import format_html
+from django.urls import reverse
 
 # Register your models here.
 
@@ -44,7 +43,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class MapAdmin(admin.ModelAdmin):
-    list_display = 'title', 'cover', 'title_seo', '_image_seo', 'site_name_seo', 'categories_count', 'node_mapping_count',
+    list_display = 'title', 'categories_link', 'node_mapping_link', 'cover', 'title_seo', '_image_seo', 'site_name_seo',
     search_fields = 'title', 'synopsis'
     # inlines = CategoryInline, NodeMappingInline,
 
@@ -52,31 +51,36 @@ class MapAdmin(admin.ModelAdmin):
         if obj.project_cover:
             return format_html(f'<img src="{escape(obj.project_cover.url)}" width="100" />')
         return "Sem capa"
-    
+
     def _image_seo(self, obj):
         if obj.image_seo:
             return format_html(f'<img src="{escape(obj.image_seo.url)}" width="100" />')
         return "Sem imagem"
 
-    def node_mapping_count(self, obj):
-        return obj.node_mappings.count()
-    node_mapping_count.short_description = 'Mapeamentos'
+    def categories_link(self, obj):
+        count = obj.categories.count()
+        url = reverse('admin:map_category_changelist',) + f'?map__id__exact={obj.id}'
+        return format_html(u'<a href="{}" target="_blank"> Ver {} </a>', url, count)
+    categories_link.short_description = 'Categorias'
 
-    def categories_count(self, obj):
-        return obj.categories.count()
-    categories_count.short_description = 'Categorias'
+    def node_mapping_link(self, obj):
+        count = obj.node_mappings.count()
+        url = reverse('admin:map_nodemapping_changelist',) + f'?map__id__exact={obj.id}'
+        return format_html(u'<a href="{}" target="_blank"> Ver {} </a>', url, count)
+    node_mapping_link.short_description = 'Mapeamentos'
 
 
 class NodeAdmin(admin.ModelAdmin):
-    list_display = 'title', 'icone', 'button_icon', 'label', 'namespace', 'index', 'x_position', 'y_position', # 'slug',
+    list_display = 'title', 'icone', 'button_icon', 'label', 'namespace', 'index', 'x_position', 'y_position',  # 'slug',
     search_fields = 'title', 'label', 'namespace', 'text',
     list_filter = 'categories__map',
+    ordering = 'title',
     # def get_queryset(self, request):
     #     return super().get_queryset(request).annotate(slug=Concat(F('namespace'), Value(' - '), F('label'), Value(' - '), F('index', output_field=CharField())))
 
     def icone(self, obj):
         if obj.button_icon:
-            return format_html(f'<img src="{escape(obj.button_icon.url)}" width="100" />')
+            return format_html(f'<img src="{escape(obj.button_icon.url)}" width="30" />')
         return f"Sem ícone (#{obj.id})" if obj.id else "Sem ícone"
 
     def slug(self, obj):
@@ -84,9 +88,9 @@ class NodeAdmin(admin.ModelAdmin):
 
 
 class NodeMappingAdmin(admin.ModelAdmin):
-    list_display = 'source', 'target', 'context', 'map'
+    list_display = 'id', 'source', 'target', 'context', 'map'
     search_fields = 'source__title', 'target__title', 'context'
-    list_filter = 'map',
+    list_filter = 'map', 'context',
 
 
 admin.site.register(Category, CategoryAdmin)

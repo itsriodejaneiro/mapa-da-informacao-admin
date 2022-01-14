@@ -146,6 +146,10 @@ for map in maps:
         node_mapping_data['source'] = source
         node_mapping_data['target'] = target
 
+        # Parse context from list to comma separated string
+        context = node_mapping_data.get('context')
+        if context:
+            node_mapping_data['context'] = ','.join([s.strip() for s in context])
         NodeMapping.objects.create(**node_mapping_data, map=new_map)
 
 

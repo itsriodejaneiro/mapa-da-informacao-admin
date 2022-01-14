@@ -22,10 +22,16 @@ class CategorySerializer(serializers.ModelSerializer):
 class NodeMappingSerializer(serializers.ModelSerializer):
     source = NodeSerializer()
     target = NodeSerializer()
+    context = serializers.SerializerMethodField()
 
     class Meta:
         model = NodeMapping
         fields = '__all__'
+
+    def get_context(self, obj):
+        if obj.context:
+            return [s.strip() for s in obj.context.split(',')]
+        return obj.context
 
 
 class MapSerializer(serializers.ModelSerializer):
