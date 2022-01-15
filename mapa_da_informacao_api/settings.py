@@ -161,6 +161,11 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
+def show_toolbar(request):
+    return True
+    
+SHOW_TOOLBAR_CALLBACK = show_toolbar
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

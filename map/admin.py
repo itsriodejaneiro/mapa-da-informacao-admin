@@ -87,7 +87,7 @@ class MapAdmin(admin.ModelAdmin):
 
 
 class NodeAdmin(admin.ModelAdmin):
-    list_display = 'title', 'icone', 'button_icon', 'label', 'namespace', 'index', 'x_position', 'y_position',  # 'slug',
+    list_display = 'id', 'title', 'icone', 'button_icon', 'label', 'namespace', 'index', 'x_position', 'y_position',  # 'slug',
     search_fields = 'title', 'label', 'namespace', 'text',
     list_filter = 'categories__map',
     ordering = 'title',
@@ -106,7 +106,7 @@ class NodeAdmin(admin.ModelAdmin):
 class NodeMappingAdmin(admin.ModelAdmin):
     list_display = 'id', 'source', 'target', 'context', 'map'
     search_fields = 'source__title', 'target__title', 'context'
-    list_filter = 'map', 'context',
+    list_filter = 'map',
 
 
 admin.site.register(Category, CategoryAdmin)
