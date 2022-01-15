@@ -80,8 +80,9 @@ class MapViewSet(viewsets.ReadOnlyModelViewSet):
                 for node in category['nodes']:
                     node['related_nodes'] = nodes_relations.get(node['id'], [])
 
-                    node_contexts = nodes_contexts.get(node['id'], [])
-                    print(node['label'], node_contexts)
+                    node_contexts = set(nodes_contexts.get(node['id'], []))
+                    
+                    node['context'] = node_contexts
                     for context_list in node_contexts:
                         related_nodes_by_context = node.get('related_nodes_by_context', set())
                         related_nodes_by_context.update(nodes_by_context.get(context_list, []))
