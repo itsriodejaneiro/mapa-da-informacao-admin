@@ -105,7 +105,7 @@ class NodeAdmin(admin.ModelAdmin):
 
 class NodeMappingAdmin(admin.ModelAdmin):
     list_display = 'id', 'source', 'target', 'context', 'map'
-    search_fields = 'source__title', 'target__title', 'context'
+    search_fields = 'source__title', 'target__title', 'source__label', 'target__label', 'context'
     list_filter = 'map',
 
 

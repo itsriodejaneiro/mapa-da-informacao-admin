@@ -17,11 +17,10 @@ def populate_context(map):
         nodes_relations[target] = nodes_relations.get(target, []) + [source]
 
         for context in context_list:
-            nodes_by_context[context] = nodes_by_context.get(context, []) + [source]
-            nodes_by_context[context] = nodes_by_context.get(context, []) + [target]
+            nodes_by_context[context] = nodes_by_context.get(context, []) + [source, target]
 
-        nodes_contexts[source] = [*nodes_contexts.get(source, []), context]
-        nodes_contexts[target] = [*nodes_contexts.get(target, []), context]
+        nodes_contexts[source] = [*nodes_contexts.get(source, []), *context_list]
+        nodes_contexts[target] = [*nodes_contexts.get(target, []), *context_list]
 
     for category in map['categories']:
         # Apply relations to nodes
