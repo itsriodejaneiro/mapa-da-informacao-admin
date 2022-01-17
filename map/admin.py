@@ -3,9 +3,9 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.utils.html import escape, format_html
-from oauth2_provider.models import (AccessToken, Application, Grant,
-                                    RefreshToken)
 from django_summernote.admin import SummernoteModelAdmin
+from django_summernote.models import Attachment
+from oauth2_provider.models import (AccessToken, Application, Grant, RefreshToken)
 
 from .models import Category, Map, Node, NodeMapping
 
@@ -117,6 +117,7 @@ admin.site.register(NodeMapping, NodeMappingAdmin)
 
 
 admin.site.unregister(Group)
+admin.site.unregister(Attachment)
 admin.site.unregister(AccessToken)
 admin.site.unregister(Application)
 admin.site.unregister(Grant)
