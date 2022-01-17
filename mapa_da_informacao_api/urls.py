@@ -26,6 +26,7 @@ router = HybridRouter()
 router.register_router(MapHybridRouter)
 
 urlpatterns = [
+    path('editor/', include('django_summernote.urls')),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('admin/', admin.site.urls),
     path('api/', include((router.urls, 'api'), namespace='api'), name='api-root'),

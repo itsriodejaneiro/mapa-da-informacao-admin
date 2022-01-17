@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'oauth2_provider',
     'rest_framework',
+    'django_summernote',
 
     'map',
 
@@ -117,6 +118,9 @@ if AWS_ACCESS_KEY_ID is not None:
 else:
     MEDIA_URL = os.environ.get('MEDIA_URL', '/media/')
     MEDIA_ROOT = os.path.join(BASE_DIR, '.media')
+
+# allows to load iframe from same hostname
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

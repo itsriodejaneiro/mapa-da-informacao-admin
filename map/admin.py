@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.utils.html import escape, format_html
 from oauth2_provider.models import (AccessToken, Application, Grant,
                                     RefreshToken)
+from django_summernote.admin import SummernoteModelAdmin
 
 from .models import Category, Map, Node, NodeMapping
 
@@ -86,13 +87,12 @@ class MapAdmin(admin.ModelAdmin):
     node_mapping_link.short_description = 'Mapeamentos'
 
 
-class NodeAdmin(admin.ModelAdmin):
+class NodeAdmin(SummernoteModelAdmin):
     list_display = 'id', 'title', 'icone', 'button_icon', 'label', 'namespace', 'index', 'x_position', 'y_position',  # 'slug',
     search_fields = 'title', 'label', 'namespace', 'text',
     list_filter = 'categories__map',
     ordering = 'title',
-    # def get_queryset(self, request):
-    #     return super().get_queryset(request).annotate(slug=Concat(F('namespace'), Value(' - '), F('label'), Value(' - '), F('index', output_field=CharField())))
+    summernote_fields = 'text',
 
     def icone(self, obj):
         if obj.button_icon:
@@ -107,6 +107,7 @@ class NodeMappingAdmin(admin.ModelAdmin):
     list_display = 'id', 'source', 'target', 'context', 'map'
     search_fields = 'source__title', 'target__title', 'source__label', 'target__label', 'context'
     list_filter = 'map',
+    autocomplete_fields = 'source', 'target',
 
 
 admin.site.register(Category, CategoryAdmin)
