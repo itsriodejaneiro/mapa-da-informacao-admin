@@ -73,7 +73,7 @@ class MapSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Map
-        fields = '__all__'
+        exclude = 'draft_password',
 
 
 class MapViewSet(viewsets.ReadOnlyModelViewSet):
