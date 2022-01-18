@@ -18,7 +18,7 @@ from contrib.router import HybridRouter
 from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
-from map.api import MapHybridRouter
+from map.api import MapHybridRouter, mini_maps
 
 from mapa_da_informacao_api import settings
 
@@ -30,6 +30,7 @@ urlpatterns = [
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('admin/', admin.site.urls),
     path('api/', include((router.urls, 'api'), namespace='api'), name='api-root'),
+    path('api/mini_maps', mini_maps, name='mini_maps'),
 ]
 
 if settings.DEBUG:

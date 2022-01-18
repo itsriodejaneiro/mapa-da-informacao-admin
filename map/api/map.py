@@ -1,4 +1,7 @@
-from rest_framework import serializers, viewsets
+from http.client import ResponseNotReady
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework.decorators import api_view
+from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
@@ -37,14 +40,14 @@ def populate_context(map):
 
     return map
     
-class NodeSerializer(serializers.ModelSerializer):
+class NodeSerializer(ModelSerializer):
 
     class Meta:
         model = Node
         fields = '__all__'
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class CategorySerializer(ModelSerializer):
     nodes = NodeSerializer(many=True, read_only=True)
 
     class Meta:
@@ -52,10 +55,10 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class NodeMappingSerializer(serializers.ModelSerializer):
+class NodeMappingSerializer(ModelSerializer):
     source = NodeSerializer()
     target = NodeSerializer()
-    context = serializers.SerializerMethodField()
+    context = SerializerMethodField()
 
     class Meta:
         model = NodeMapping
@@ -67,7 +70,7 @@ class NodeMappingSerializer(serializers.ModelSerializer):
         return obj.context
 
 
-class MapSerializer(serializers.ModelSerializer):
+class MapSerializer(ModelSerializer):
     categories = CategorySerializer(many=True, read_only=True)
     node_mappings = NodeMappingSerializer(many=True, read_only=True)
 
@@ -75,8 +78,14 @@ class MapSerializer(serializers.ModelSerializer):
         model = Map
         exclude = 'draft_password',
 
+class MiniMapSerializer(ModelSerializer):
 
-class MapViewSet(viewsets.ReadOnlyModelViewSet):
+    class Meta:
+        model = Map
+        fields = 'id', 'title', 'synopsis', 'summary', 'project_cover', 'url_map',
+
+
+class MapViewSet(ReadOnlyModelViewSet):
     serializer_class = MapSerializer
     permission_classes = AllowAny,
     queryset = Map.objects.all().order_by('title').prefetch_related('node_mappings', 'node_mappings__source',
@@ -101,3 +110,11 @@ class MapViewSet(viewsets.ReadOnlyModelViewSet):
         data = populate_context(data)
 
         return Response(data)
+
+@api_view(['GET'])
+def mini_maps(request):
+    # todo: cache
+    # todo: clear cache on model
+    queryset = Map.objects.all().order_by('title')
+    data = MiniMapSerializer(queryset, many=True).data
+    return Response(data)
