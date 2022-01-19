@@ -19,11 +19,15 @@ class Node(models.Model):
     _id = models.CharField(max_length=255, null=True, blank=True, verbose_name='ID antigo') # todo remove
     def __str__(self) -> str:
         try:
-            fields = self.namespace, self.label, self.index
-            fields = list(filter(lambda s: s is not None and str(s).strip(), fields))
-            return ' - '.join(fields)
+            return self.slug
         except:
             return self.title if self.title else super().__str__()
+
+    @property
+    def slug(self):
+        fields = self.namespace, self.label, self.index
+        fields = list(filter(lambda s: s is not None and str(s).strip(), fields))
+        return ' - '.join(fields)
 
     class Meta:
         verbose_name = "Nó"

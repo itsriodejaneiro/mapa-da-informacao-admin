@@ -9,7 +9,7 @@ class NodeMapping(models.Model):
 
     def __str__(self) -> str:
         if self.source and self.target:
-            return f"{self.source.title} -> {self.target.title} ({self.context})"
+            return f"{self.source} -> {self.target} ({self.context})"
         return super().__str__()
 
     class Meta:
