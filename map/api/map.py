@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 from ..models import Category, Map, Node, NodeMapping
 
+
 def populate_context(map):
     nodes_relations = {}  # {node_id: [related_node_id]}
     nodes_by_context = {}  # key: context, value: list of nodes
@@ -31,7 +32,7 @@ def populate_context(map):
             node['related_nodes'] = nodes_relations.get(node['id'], [])
 
             node_contexts = set(nodes_contexts.get(node['id'], []))
-            
+
             node['context'] = node_contexts
             for context_list in node_contexts:
                 related_nodes_by_context = node.get('related_nodes_by_context', set())
@@ -39,7 +40,8 @@ def populate_context(map):
                 node['related_nodes_by_context'] = related_nodes_by_context
 
     return map
-    
+
+
 class NodeSerializer(ModelSerializer):
 
     class Meta:
@@ -71,12 +73,18 @@ class NodeMappingSerializer(ModelSerializer):
 
 
 class MapSerializer(ModelSerializer):
-    categories = CategorySerializer(many=True, read_only=True)
+    categories = SerializerMethodField()
     node_mappings = NodeMappingSerializer(many=True, read_only=True)
 
+    def get_categories(self, obj):
+        queryset = obj.categories.order_by('order')
+        data = CategorySerializer(queryset, many=True, read_only=True).data
+        return list(sorted(data, key=lambda x: x.get('order') or 0))
+        
     class Meta:
         model = Map
         exclude = 'draft_password',
+
 
 class MiniMapSerializer(ModelSerializer):
 
@@ -101,7 +109,7 @@ class MapViewSet(ReadOnlyModelViewSet):
             map = populate_context(map)
 
         return Response(data)
-    
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer_class()
@@ -110,6 +118,7 @@ class MapViewSet(ReadOnlyModelViewSet):
         data = populate_context(data)
 
         return Response(data)
+
 
 @api_view(['GET'])
 def mini_maps(request):
