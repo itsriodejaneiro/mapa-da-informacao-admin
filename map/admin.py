@@ -108,6 +108,7 @@ class MapAdmin(admin.ModelAdmin):
     list_display = 'title', 'categories_link', 'node_mapping_link', 'cover', 'title_seo', '_image_seo', 'site_name_seo',
     search_fields = 'title', 'synopsis'
     form = MapModelForm
+    exclude = 'draft_password',
     # inlines = CategoryInline, NodeMappingInline,
 
     def cover(self, obj):
@@ -134,7 +135,7 @@ class MapAdmin(admin.ModelAdmin):
 
 
 class NodeAdmin(SummernoteModelAdmin):
-    list_display = 'id', 'title', 'icone', 'button_icon', 'label', 'namespace', 'index', 'x_position', 'y_position',  # 'slug',
+    list_display = 'id', 'title', 'icone', 'namespace', 'label', 'index', 'x_position', 'y_position',  # 'slug',
     search_fields = 'title', 'label', 'namespace', 'text',
     list_filter = 'categories__map',
     ordering = 'title',
