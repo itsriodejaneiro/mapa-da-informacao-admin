@@ -125,7 +125,7 @@ class NodeMappingInline(admin.TabularInline):
 class MyUserAdmin(UserAdmin):
     fieldsets = (
         (None, {
-            'fields': ('username', 'password', 'is_active', 'is_staff', 'is_superuser',
+            'fields': ('username', 'password', 'email', 'is_active', 'is_staff', 'is_superuser',
                        'first_name', 'last_name', 'groups', 'last_login', 'date_joined')
         }),
     )
