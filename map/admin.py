@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import admin
-from django.contrib.auth.models import Group, Permission, User
+from django.contrib.auth.models import Group, User
 from django.db.models import CharField, Q, Value
 from django.db.models.functions import Concat
 from django.urls import reverse
@@ -10,7 +10,7 @@ from django_summernote.admin import SummernoteModelAdmin
 from django_summernote.models import Attachment
 from oauth2_provider.models import (AccessToken, Application, Grant,
                                     RefreshToken)
-
+from oauth2_provider.models import IDToken
 from .models import Category, Map, Node, NodeMapping
 from django.contrib.auth.admin import UserAdmin
 
@@ -126,7 +126,7 @@ class MyUserAdmin(UserAdmin):
     fieldsets = (
         (None, {
             'fields': ('username', 'password', 'is_active', 'is_staff', 'is_superuser',
-                       'first_name', 'last_name', 'maps', 'groups', 'last_login', 'date_joined')
+                       'first_name', 'last_name', 'groups', 'last_login', 'date_joined')
         }),
     )
     readonly_fields = ('last_login', 'date_joined')
@@ -213,7 +213,6 @@ class NodeAdmin(SummernoteModelAdmin):
         else:
             return super().get_queryset(request).filter(categories__map__editors=request.user)
 
-
     def icone(self, obj):
         if obj.button_icon:
             return format_html(f'<img src="{escape(obj.button_icon.url)}" width="30" />')
@@ -226,7 +225,7 @@ class NodeAdmin(SummernoteModelAdmin):
 class NodeMappingAdmin(admin.ModelAdmin):
     list_display = 'id', 'source', 'target', 'context', 'map'
     search_fields = 'source__title', 'target__title', 'source__label', 'target__label', 'context'
-    list_filter = MapCustomFilter, NodeMappingNodeFilter, 
+    list_filter = MapCustomFilter, NodeMappingNodeFilter,
     autocomplete_fields = 'source', 'target',
 
     def get_queryset(self, request):
@@ -235,7 +234,6 @@ class NodeMappingAdmin(admin.ModelAdmin):
             return super().get_queryset(request)
         else:
             return super().get_queryset(request).filter(map__editors=request.user)
-
 
 
 admin.site.register(Category, CategoryAdmin)
@@ -253,3 +251,8 @@ admin.site.unregister(AccessToken)
 admin.site.unregister(Application)
 admin.site.unregister(Grant)
 admin.site.unregister(RefreshToken)
+
+try:
+    admin.site.unregister(IDToken)
+except:
+    pass
