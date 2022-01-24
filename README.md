@@ -13,6 +13,9 @@ source: http://whitenoise.evans.io/en/stable/django.html
 - Create superuser
  `python manage.py createsuperuser`
 
+- Create default groups for editor and collaborator users
+ `python manage.py create_groups`
+
 - Create client_id and client_secret for frontend app:
 https://django-oauth-toolkit.readthedocs.io/en/latest/getting_started.html#authorization-code
 

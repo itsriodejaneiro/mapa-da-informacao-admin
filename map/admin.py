@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
-from django.contrib.auth.models import Group
-from django.db.models import CharField, F, Q, Value
+from django.contrib.auth.models import Group, Permission, User
+from django.db.models import CharField, Q, Value
 from django.db.models.functions import Concat
 from django.urls import reverse
 from django.utils.html import escape, format_html
@@ -12,6 +12,7 @@ from oauth2_provider.models import (AccessToken, Application, Grant,
                                     RefreshToken)
 
 from .models import Category, Map, Node, NodeMapping
+from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
 
@@ -19,7 +20,7 @@ from .models import Category, Map, Node, NodeMapping
 
 
 class MapModelForm(forms.ModelForm):
-    summary = forms.CharField(widget=forms.Textarea)
+    summary = forms.CharField(widget=forms.Textarea, label="Resumo", help_text="Resumo do mapa")
 
     class Meta:
         model = Map
@@ -64,9 +65,44 @@ class NodeMappingNodeFilter(admin.SimpleListFilter):
         if node_id:
             node_id = node_id.split(',')
             return queryset.filter(
-                Q(source__id__in=node_id)|Q(target__id__in=node_id),
+                Q(source__id__in=node_id) | Q(target__id__in=node_id),
             )
         return queryset
+
+
+class MapCustomFilter(admin.SimpleListFilter):
+    title = _('Map')
+    parameter_name = 'map'
+
+    def lookups(self, request, model_admin):
+        queryset = Map.objects.all()
+        if not request.user.is_superuser:
+            queryset = queryset.filter(editors=request.user)
+        return queryset.values_list('id', 'title')
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value:
+            return queryset.filter(map=value)
+        return queryset
+
+
+class NodeMapFilter(admin.SimpleListFilter):
+    title = _('Map')
+    parameter_name = 'map'
+
+    def lookups(self, request, model_admin):
+        queryset = Map.objects.all()
+        if not request.user.is_superuser:
+            queryset = queryset.filter(editors=request.user)
+        return queryset.values_list('id', 'title')
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value:
+            return queryset.filter(categories__map=value)
+        return queryset
+
 
 # endregion
 
@@ -86,12 +122,29 @@ class NodeMappingInline(admin.TabularInline):
 # endregion
 
 
+class MyUserAdmin(UserAdmin):
+    fieldsets = (
+        (None, {
+            'fields': ('username', 'password', 'is_active', 'is_staff', 'is_superuser',
+                       'first_name', 'last_name', 'maps', 'groups', 'last_login', 'date_joined')
+        }),
+    )
+    readonly_fields = ('last_login', 'date_joined')
+
+
 class CategoryAdmin(admin.ModelAdmin):
     list_display = 'title', 'map', 'order', 'color', 'show', 'min_size', 'max_size', 'height_area', 'node_count'
     ordering = 'map', 'order',
-    list_filter = 'map',
+    list_filter = MapCustomFilter,
     filter_horizontal = 'nodes',
     search_fields = 'title',
+
+    def get_queryset(self, request):
+        # If is superuser, show all, else only the ones they're editors
+        if request.user and request.user.is_superuser:
+            return super().get_queryset(request)
+        else:
+            return super().get_queryset(request).filter(map__editors=request.user)
 
     def color(self, obj):
         if obj.node_color:
@@ -109,7 +162,13 @@ class MapAdmin(admin.ModelAdmin):
     search_fields = 'title', 'synopsis'
     form = MapModelForm
     exclude = 'draft_password',
-    # inlines = CategoryInline, NodeMappingInline,
+
+    def get_queryset(self, request):
+        # If is superuser, show all maps, else, only the ones they're editors
+        if request.user and request.user.is_superuser:
+            return super().get_queryset(request)
+        else:
+            return super().get_queryset(request).filter(editors=request.user)
 
     def cover(self, obj):
         if obj.project_cover:
@@ -133,13 +192,27 @@ class MapAdmin(admin.ModelAdmin):
         return format_html(u'<a href="{}" target="_blank"> Ver {} </a>', url, count)
     node_mapping_link.short_description = 'Mapeamentos'
 
+    def get_fields(self, request, obj=None):
+        fields = super(MapAdmin, self).get_fields(request, obj)
+        if not request.user.is_superuser:
+            fields = [f for f in fields if f != 'editors']
+        return fields
+
 
 class NodeAdmin(SummernoteModelAdmin):
     list_display = 'id', 'title', 'icone', 'namespace', 'label', 'index', 'x_position', 'y_position',  # 'slug',
     search_fields = 'title', 'label', 'namespace', 'text',
-    list_filter = 'categories__map',
+    list_filter = NodeMapFilter,
     ordering = 'title',
     summernote_fields = 'text',
+
+    def get_queryset(self, request):
+        # If is superuser, show all, else only the ones they're editors
+        if request.user and request.user.is_superuser:
+            return super().get_queryset(request)
+        else:
+            return super().get_queryset(request).filter(categories__map__editors=request.user)
+
 
     def icone(self, obj):
         if obj.button_icon:
@@ -153,8 +226,16 @@ class NodeAdmin(SummernoteModelAdmin):
 class NodeMappingAdmin(admin.ModelAdmin):
     list_display = 'id', 'source', 'target', 'context', 'map'
     search_fields = 'source__title', 'target__title', 'source__label', 'target__label', 'context'
-    list_filter = 'map', NodeMappingNodeFilter,
+    list_filter = MapCustomFilter, NodeMappingNodeFilter, 
     autocomplete_fields = 'source', 'target',
+
+    def get_queryset(self, request):
+        # If is superuser, show all, else only the ones they're editors
+        if request.user and request.user.is_superuser:
+            return super().get_queryset(request)
+        else:
+            return super().get_queryset(request).filter(map__editors=request.user)
+
 
 
 admin.site.register(Category, CategoryAdmin)
@@ -162,6 +243,9 @@ admin.site.register(Map, MapAdmin)
 admin.site.register(Node, NodeAdmin)
 admin.site.register(NodeMapping, NodeMappingAdmin)
 
+# replace default user admin with custom
+admin.site.unregister(User)
+admin.site.register(User, MyUserAdmin)
 
 admin.site.unregister(Group)
 admin.site.unregister(Attachment)
