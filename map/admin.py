@@ -222,12 +222,13 @@ class CategoryAdmin(admin.ModelAdmin):
     node_count.short_description = 'Nós'
 
 
-class MapAdmin(admin.ModelAdmin):
+class MapAdmin(SummernoteModelAdmin):
     list_display = 'title', 'categories_link', 'node_mapping_link', 'cover', 'title_seo', '_image_seo', 'site_name_seo',
     search_fields = 'title', 'synopsis'
     form = MapModelForm
     filter_horizontal = 'editors',
     exclude = 'draft_password',
+    summernote_fields = 'synopsis',
 
     def get_queryset(self, request):
         # If is superuser, show all maps, else, only the ones they're editors
