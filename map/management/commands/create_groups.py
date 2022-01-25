@@ -13,9 +13,10 @@ class Command(BaseCommand):
         editor_group = Group.objects.filter(name=editor_group_name).first()
         if not editor_group:
             editor_group = Group.objects.create(name=editor_group_name)
-
         editor_permissions = Permission.objects.filter(
             content_type__app_label='map').exclude(codename__icontains='delete')
+        # nao pode adicionar mapas
+        editor_permissions = editor_permissions.exclude(codename__icontains='add', content_type__model='map')
         editor_group.permissions.set(editor_permissions)
 
         # Colaborador:
