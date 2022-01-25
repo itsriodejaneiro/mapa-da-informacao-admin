@@ -1,6 +1,5 @@
 from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
-from html2text import re
 
 
 class Command(BaseCommand):
