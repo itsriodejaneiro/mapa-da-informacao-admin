@@ -18,4 +18,4 @@ class Category(models.Model):
         return self.title if self.title else super().__str__()
 
     class Meta:
-        verbose_name = "Categoria"
+        verbose_name = "Camada"

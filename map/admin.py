@@ -51,8 +51,8 @@ class CategoryModelForm(forms.ModelForm):
             'node_color': _('Cor do nó em hexadecimal. <br>Ex.: #FFFFFF'),
             'min_size': _('Tamanho mínimo do nó em pixels. <br>Ex.: 10.0'),
             'max_size': _('Tamanho máximo do nó em pixels. <br>Ex.: 22.2'),
-            'height_area': _('Altura da área da categoria em pixels. <br>Ex.: 200.1'),
-            # 'show': _('Exibir ou não a categoria na página de mapa.'),
+            'height_area': _('Altura da área da camada em pixels. <br>Ex.: 200.1'),
+            # 'show': _('Exibir ou não a camada na página de mapa.'),
 
         }
 
@@ -69,7 +69,7 @@ class NodeModelForm(forms.ModelForm):
             'text': _('Editor WYSIWYG<br>Máx: 300 caracteres.'),
             'x_position': _('Posição horizontal do nó em pixels <br>Ex.: 30.5.'),
             'y_position': _('Posição vertical do nó em pixels <br>Ex.: 30.5.'),
-            'namespace': _('Facilitador<br> Ex: Nome do mapa - Categoria <br>Máx: 255 caracteres.'),
+            'namespace': _('Facilitador<br> Ex: Nome do mapa - Camada <br>Máx: 255 caracteres.'),
             'index': _('Facilitador<br> Para nós com mesmo nome <br> Ex: 3'),
             'button_text': _('Máx: 255 caracteres.'),
             'button_link': _('Máx: 255 caracteres.'),
@@ -256,7 +256,7 @@ class MapAdmin(SummernoteModelAdmin):
         count = obj.categories.count()
         url = reverse('admin:map_category_changelist',) + f'?map__id__exact={obj.id}'
         return format_html(u'<a href="{}" target="_blank"> Ver {} </a>', url, count)
-    categories_link.short_description = 'Categorias'
+    categories_link.short_description = 'Camadas'
 
     def node_mapping_link(self, obj):
         count = obj.node_mappings.count()
