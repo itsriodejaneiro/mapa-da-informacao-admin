@@ -35,7 +35,7 @@ ALLOWED_HOSTS = env('ALLOWED_HOSTS', default='*').split(',')
 CORS_ALLOW_ALL_ORIGINS = True
 # CORS_ALLOWED_ORIGINS = env('CORS_ALLOWED_ORIGINS', default='*').split(',')
 
-CSRF_TRUSTED_ORIGINS = env('CSRF_TRUSTED_ORIGINS', default='*').split(',')
+CSRF_TRUSTED_ORIGINS = env('CSRF_TRUSTED_ORIGINS', default='https://127.0.0.1,http://127.0.0.1').split(',')
 
 # Application definition
 
