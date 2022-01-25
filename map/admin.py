@@ -211,6 +211,11 @@ class CategoryAdmin(admin.ModelAdmin):
             queryset = queryset.filter(map__editors=request.user)
         return queryset
 
+    def render_change_form(self, request, context, *args, **kwargs):
+        if not request.user.is_superuser:
+            context['adminform'].form.fields['map'].queryset = Map.objects.filter(editors=request.user)
+        return super(CategoryAdmin, self).render_change_form(request, context, *args, **kwargs)
+
     def color(self, obj):
         if obj.node_color:
             return format_html(f'<div title="{obj.node_color}" style="background-color: {obj.node_color};width:50px;height:50px;border-radius:50px"></div>')
@@ -306,6 +311,10 @@ class NodeMappingAdmin(admin.ModelAdmin):
         else:
             return super().get_queryset(request).filter(map__editors=request.user)
 
+    def render_change_form(self, request, context, *args, **kwargs):
+        if not request.user.is_superuser:
+            context['adminform'].form.fields['map'].queryset = Map.objects.filter(editors=request.user)
+        return super(NodeMappingAdmin, self).render_change_form(request, context, *args, **kwargs)
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Map, MapAdmin)
