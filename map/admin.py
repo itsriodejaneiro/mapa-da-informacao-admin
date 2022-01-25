@@ -1,18 +1,18 @@
 from django import forms
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group, User
-from django.db.models import CharField, Q, Value
+from django.db.models import CharField, Count, Q, Value
 from django.db.models.functions import Concat
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils.translation import gettext_lazy as _
 from django_summernote.admin import SummernoteModelAdmin
 from django_summernote.models import Attachment
-from oauth2_provider.models import (AccessToken, Application, Grant,
+from oauth2_provider.models import (AccessToken, Application, Grant, IDToken,
                                     RefreshToken)
-from oauth2_provider.models import IDToken
+
 from .models import Category, Map, Node, NodeMapping
-from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
 
@@ -20,11 +20,71 @@ from django.contrib.auth.admin import UserAdmin
 
 
 class MapModelForm(forms.ModelForm):
-    summary = forms.CharField(widget=forms.Textarea, label="Resumo", help_text="Resumo do mapa")
+    summary = forms.CharField(widget=forms.Textarea, label="Resumo",
+                              help_text="Resumo do mapa (página de projetos) <br> Máx: 300 caracteres")
 
     class Meta:
         model = Map
         fields = '__all__'
+        labels = {
+            'editors': _('Editores e colaboradores'),
+        }
+        help_texts = {
+            'synopsis': _('Sinopse do mapa (página de mapa). <br> Máx: 500 caracteres.'),
+            'url_map': _('URL do mapa <br> Ex.: www.mapadainformacao.com.br/projetos/url-do-mapa/<br> Máx: 100 caracteres'),
+            'title_seo': _('Ex.: Governo e Gestão de Documentos do Cidadão<br> Máx: 255 caracteres'),
+            'description_seo': _('Ex.: Como o governo armazena e processa as informações de identificação dos cidadãos?<br> Máx: 255 caracteres'),
+            'site_name_seo': _('Ex.: Mapa da Informação do Sistema de Identificação Brasileiro<br> Máx: 255 caracteres'),
+            'editors': _('Editores ou colaboradores que podem acessar este mapa.<br>'),
+        }
+
+
+class CategoryModelForm(forms.ModelForm):
+
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+        help_texts = {
+            'title': _('Máx: 255 caracteres.'),
+            'description': _('Máx: 300 caracteres'),
+            'node_color': _('Cor do nó em hexadecimal. <br>Ex.: #FFFFFF'),
+            'min_size': _('Tamanho mínimo do nó em pixels. <br>Ex.: 10.0'),
+            'max_size': _('Tamanho máximo do nó em pixels. <br>Ex.: 22.2'),
+            'height_area': _('Altura da área da categoria em pixels. <br>Ex.: 200.1'),
+            # 'show': _('Exibir ou não a categoria na página de mapa.'),
+
+        }
+
+
+class NodeModelForm(forms.ModelForm):
+
+    class Meta:
+        model = Node
+        fields = '__all__'
+
+        help_texts = {
+            'title': _('Máx: 255 caracteres.'),
+            'label': _('Máx: 255 caracteres.'),
+            'text': _('Editor WYSIWYG<br>Máx: 300 caracteres.'),
+            'x_position': _('Posição horizontal do nó em pixels <br>Ex.: 30.5.'),
+            'y_position': _('Posição vertical do nó em pixels <br>Ex.: 30.5.'),
+            'namespace': _('Facilitador<br> Ex: Nome do mapa - Categoria <br>Máx: 255 caracteres.'),
+            'index': _('Facilitador<br> Para nós com mesmo nome <br> Ex: 3'),
+            'button_text': _('Máx: 255 caracteres.'),
+            'button_link': _('Máx: 255 caracteres.'),
+        }
+
+
+class NodeMappingModelForm(forms.ModelForm):
+
+    class Meta:
+        model = NodeMapping
+        fields = '__all__'
+
+        help_texts = {
+            'context': _('Ex: adm2,sis3,fav5<br>Máx: 255 caracteres.'),
+        }
 
 
 # endregion
@@ -133,18 +193,23 @@ class MyUserAdmin(UserAdmin):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = 'title', 'map', 'order', 'color', 'show', 'min_size', 'max_size', 'height_area', 'node_count'
+    list_display = 'id', 'title', 'map', 'order', 'color', 'show', 'min_size', 'max_size', 'height_area', 'node_count'
     ordering = 'map', 'order',
+    search_fields = 'title',
+    exclude = 'show',
     list_filter = MapCustomFilter,
     filter_horizontal = 'nodes',
-    search_fields = 'title',
+    form = CategoryModelForm
 
     def get_queryset(self, request):
         # If is superuser, show all, else only the ones they're editors
-        if request.user and request.user.is_superuser:
-            return super().get_queryset(request)
-        else:
-            return super().get_queryset(request).filter(map__editors=request.user)
+        queryset = super().get_queryset(request)\
+            .select_related('map')\
+            .annotate(node_count=Count('nodes'))
+
+        if not request.user.is_superuser:
+            queryset = queryset.filter(map__editors=request.user)
+        return queryset
 
     def color(self, obj):
         if obj.node_color:
@@ -153,7 +218,7 @@ class CategoryAdmin(admin.ModelAdmin):
     color.short_description = 'Cor'
 
     def node_count(self, obj):
-        return obj.nodes.count()
+        return obj.node_count
     node_count.short_description = 'Nós'
 
 
@@ -161,6 +226,7 @@ class MapAdmin(admin.ModelAdmin):
     list_display = 'title', 'categories_link', 'node_mapping_link', 'cover', 'title_seo', '_image_seo', 'site_name_seo',
     search_fields = 'title', 'synopsis'
     form = MapModelForm
+    filter_horizontal = 'editors',
     exclude = 'draft_password',
 
     def get_queryset(self, request):
@@ -192,6 +258,7 @@ class MapAdmin(admin.ModelAdmin):
         return format_html(u'<a href="{}" target="_blank"> Ver {} </a>', url, count)
     node_mapping_link.short_description = 'Mapeamentos'
 
+    # enable 'editors' field only for superusers
     def get_fields(self, request, obj=None):
         fields = super(MapAdmin, self).get_fields(request, obj)
         if not request.user.is_superuser:
@@ -202,9 +269,11 @@ class MapAdmin(admin.ModelAdmin):
 class NodeAdmin(SummernoteModelAdmin):
     list_display = 'id', 'title', 'icone', 'namespace', 'label', 'index', 'x_position', 'y_position',  # 'slug',
     search_fields = 'title', 'label', 'namespace', 'text',
-    list_filter = NodeMapFilter,
     ordering = 'title',
+    exclude = '_id',
+    list_filter = NodeMapFilter,
     summernote_fields = 'text',
+    form = NodeModelForm
 
     def get_queryset(self, request):
         # If is superuser, show all, else only the ones they're editors
@@ -227,6 +296,7 @@ class NodeMappingAdmin(admin.ModelAdmin):
     search_fields = 'source__title', 'target__title', 'source__label', 'target__label', 'context'
     list_filter = MapCustomFilter, NodeMappingNodeFilter,
     autocomplete_fields = 'source', 'target',
+    form = NodeMappingModelForm
 
     def get_queryset(self, request):
         # If is superuser, show all, else only the ones they're editors

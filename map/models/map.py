@@ -17,6 +17,7 @@ class Map(models.Model):
     site_name_seo = models.CharField(max_length=255, blank=True, null=True, verbose_name='Nome do site SEO')
     image_seo = models.ImageField(upload_to='map/image_seo', blank=True, null=True, verbose_name='Imagem SEO')
 
+    # todo: add request.user to editors when creating a new map
     editors = models.ManyToManyField('auth.User', related_name='maps', verbose_name='Editores')
 
     def __str__(self) -> str:
