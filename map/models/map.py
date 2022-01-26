@@ -1,8 +1,10 @@
+from statistics import mode
 from django.db import models
 
 
 class Map(models.Model):
     title = models.CharField(max_length=255, verbose_name='Título')
+    show = models.BooleanField(default=True, verbose_name='Exibir')
     synopsis = models.TextField(verbose_name='Sinopse')
     summary = models.CharField(max_length=500, null=True, blank=True, verbose_name='Resumo')
     project_cover = models.ImageField(upload_to='map/project_cover', verbose_name='Capa do projeto')
@@ -16,6 +18,7 @@ class Map(models.Model):
     description_seo = models.CharField(max_length=255, blank=True, null=True, verbose_name='Descrição SEO')
     site_name_seo = models.CharField(max_length=255, blank=True, null=True, verbose_name='Nome do site SEO')
     image_seo = models.ImageField(upload_to='map/image_seo', blank=True, null=True, verbose_name='Imagem SEO')
+
 
     # todo: add request.user to editors when creating a new map
     editors = models.ManyToManyField('auth.User', related_name='maps', verbose_name='Editores')

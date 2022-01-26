@@ -36,6 +36,7 @@ class MapModelForm(forms.ModelForm):
             'description_seo': _('Ex.: Como o governo armazena e processa as informações de identificação dos cidadãos?<br> Máx: 255 caracteres'),
             'site_name_seo': _('Ex.: Mapa da Informação do Sistema de Identificação Brasileiro<br> Máx: 255 caracteres'),
             'editors': _('Editores ou colaboradores que podem acessar este mapa.<br>'),
+            'show': _('Permite exibir ou esconder este mapa do site.'),
         }
 
 
@@ -256,7 +257,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class MapAdmin(SummernoteModelAdmin):
-    list_display = 'title', 'categories_link', 'node_mapping_link', 'cover', 'title_seo', '_image_seo', 'site_name_seo',
+    list_display = 'id', 'title', 'show', 'categories_link', 'node_mapping_link', 'cover', 'title_seo', '_image_seo', 'site_name_seo',
     search_fields = 'title', 'synopsis'
     form = MapModelForm
     filter_horizontal = 'editors',

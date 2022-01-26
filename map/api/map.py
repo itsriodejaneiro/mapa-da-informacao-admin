@@ -96,7 +96,7 @@ class MiniMapSerializer(ModelSerializer):
 class MapViewSet(ReadOnlyModelViewSet):
     serializer_class = MapSerializer
     permission_classes = AllowAny,
-    queryset = Map.objects.all().order_by('title').prefetch_related('node_mappings', 'node_mappings__source',
+    queryset = Map.objects.filter(show=True).order_by('title').prefetch_related('node_mappings', 'node_mappings__source',
                                                                     'node_mappings__target', 'categories', 'categories__nodes')
 
     # todo: apply in get as well
@@ -124,6 +124,6 @@ class MapViewSet(ReadOnlyModelViewSet):
 def mini_maps(request):
     # todo: cache
     # todo: clear cache on model
-    queryset = Map.objects.all().order_by('title')
+    queryset = Map.objects.filter(show=True).order_by('title')
     data = MiniMapSerializer(queryset, many=True).data
     return Response(data)
