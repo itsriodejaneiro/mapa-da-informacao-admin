@@ -72,7 +72,7 @@ class NodeModelForm(forms.ModelForm):
             'namespace': _('Facilitador<br> Ex: Nome do mapa - Camada <br>Máx: 255 caracteres.'),
             'index': _('Facilitador<br> Para nós com mesmo nome <br> Ex: 3'),
             'button_text': _('Máx: 255 caracteres.'),
-            'button_link': _('Máx: 255 caracteres.'),
+            'button_link': _('Sempre incluir url completa.<br> Ex.: https://www.google.com<br>Máx: 255 caracteres.'),
         }
 
 
@@ -183,13 +183,41 @@ class NodeMappingInline(admin.TabularInline):
 
 
 class MyUserAdmin(UserAdmin):
+    list_display = 'id', 'username', 'name', 'email', 'is_superuser', 'my_groups',
+
     fieldsets = (
+        ("Informações de login", {
+            'fields': ('username', 'password',)
+        }),
+        ("Informações Pessoais", {
+            'fields': ('email', 'first_name', 'last_name',)
+        }),
+        ("Permissões", {
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups')
+        }),
         (None, {
-            'fields': ('username', 'password', 'email', 'is_active', 'is_staff', 'is_superuser',
-                       'first_name', 'last_name', 'groups', 'last_login', 'date_joined')
+            'fields': ('last_login', 'date_joined')
         }),
     )
-    readonly_fields = ('last_login', 'date_joined')
+    readonly_fields = ('last_login', 'date_joined',)
+
+    def my_groups(self, obj):
+        groups = obj.groups.all()
+        if groups.count():
+            groups = '<br>'.join(list(obj.groups.all().values_list('name', flat=True)))
+            return format_html(f'{groups}')
+        return "-"
+    my_groups.short_description = 'grupos'
+
+    def name(self, obj):
+        return obj.get_full_name()
+    name.short_description = 'Nome'
+
+    def save_model(self, request, obj, form, change):
+        if request.user.is_superuser and not obj.id:
+            obj.is_staff = True
+            obj.is_active = True
+            obj.save()
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -315,6 +343,7 @@ class NodeMappingAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             context['adminform'].form.fields['map'].queryset = Map.objects.filter(editors=request.user)
         return super(NodeMappingAdmin, self).render_change_form(request, context, *args, **kwargs)
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Map, MapAdmin)
