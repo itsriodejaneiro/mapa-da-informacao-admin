@@ -108,10 +108,12 @@ class NodeMappingNodeFilter(admin.SimpleListFilter):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        return Node.objects.all()\
+        queryset = Node.objects.all()\
             .annotate(slug=Concat('namespace', Value(' - '), 'label', output_field=CharField()))\
-            .order_by('slug')\
-            .values_list('id', 'slug')
+            .order_by('slug')
+        if not request.user.is_superuser:
+            queryset = queryset.filter(categories__map__editors=request.user)
+        return queryset.values_list('id', 'slug')
 
     def queryset(self, request, queryset):
         """
