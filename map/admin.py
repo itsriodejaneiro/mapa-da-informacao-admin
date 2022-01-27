@@ -245,6 +245,7 @@ class CategoryAdmin(admin.ModelAdmin):
     def render_change_form(self, request, context, *args, **kwargs):
         if not request.user.is_superuser:
             context['adminform'].form.fields['map'].queryset = Map.objects.filter(editors=request.user)
+            context['adminform'].form.fields['nodes'].queryset = Node.objects.filter(categories__map__editors=request.user)
         return super(CategoryAdmin, self).render_change_form(request, context, *args, **kwargs)
 
     def color(self, obj):
