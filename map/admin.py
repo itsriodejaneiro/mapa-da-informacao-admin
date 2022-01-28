@@ -112,7 +112,7 @@ class NodeMappingNodeFilter(admin.SimpleListFilter):
             .annotate(slug=Concat('namespace', Value(' - '), 'label', output_field=CharField()))\
             .order_by('slug')
         if not request.user.is_superuser:
-            queryset = queryset.filter(categories__map__editors=request.user)
+            queryset = queryset.filter(Q(categories__map__editors=request.user)|Q(categories__isnull=True)|Q(categories__map__isnull=True))
         return queryset.values_list('id', 'slug')
 
     def queryset(self, request, queryset):
@@ -245,7 +245,7 @@ class CategoryAdmin(admin.ModelAdmin):
     def render_change_form(self, request, context, *args, **kwargs):
         if not request.user.is_superuser:
             context['adminform'].form.fields['map'].queryset = Map.objects.filter(editors=request.user)
-            context['adminform'].form.fields['nodes'].queryset = Node.objects.filter(categories__map__editors=request.user)
+            context['adminform'].form.fields['nodes'].queryset = Node.objects.filter(Q(categories__map__editors=request.user)|Q(categories__isnull=True)|Q(categories__map__isnull=True))
         return super(CategoryAdmin, self).render_change_form(request, context, *args, **kwargs)
 
     def color(self, obj):
@@ -318,7 +318,7 @@ class NodeAdmin(SummernoteModelAdmin):
         if request.user and request.user.is_superuser:
             return super().get_queryset(request)
         else:
-            return super().get_queryset(request).filter(categories__map__editors=request.user)
+            return super().get_queryset(request).filter(Q(categories__map__editors=request.user)|Q(categories__isnull=True)|Q(categories__map__isnull=True))
 
     def icone(self, obj):
         if obj.button_icon:
