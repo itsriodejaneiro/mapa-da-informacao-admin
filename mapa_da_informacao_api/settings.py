@@ -30,6 +30,7 @@ environ.Env.read_env()
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG', default=False)
 ALLOWED_HOSTS = env('ALLOWED_HOSTS', default='*').split(',')
+FRONTEND_URL = env('FRONTEND_URL', default=None)
 
 # todo: restrict
 CORS_ALLOW_ALL_ORIGINS = True

@@ -12,6 +12,7 @@ from django_summernote.models import Attachment
 from oauth2_provider.models import (AccessToken, Application, Grant, IDToken,
                                     RefreshToken)
 
+from mapa_da_informacao_api.settings import FRONTEND_URL
 from .models import Category, Map, Node, NodeMapping
 
 # Register your models here.
@@ -112,7 +113,8 @@ class NodeMappingNodeFilter(admin.SimpleListFilter):
             .annotate(slug=Concat('namespace', Value(' - '), 'label', output_field=CharField()))\
             .order_by('slug')
         if not request.user.is_superuser:
-            queryset = queryset.filter(Q(categories__map__editors=request.user)|Q(categories__isnull=True)|Q(categories__map__isnull=True))
+            queryset = queryset.filter(Q(categories__map__editors=request.user) | Q(
+                categories__isnull=True) | Q(categories__map__isnull=True))
         return queryset.values_list('id', 'slug')
 
     def queryset(self, request, queryset):
@@ -245,7 +247,8 @@ class CategoryAdmin(admin.ModelAdmin):
     def render_change_form(self, request, context, *args, **kwargs):
         if not request.user.is_superuser:
             context['adminform'].form.fields['map'].queryset = Map.objects.filter(editors=request.user)
-            context['adminform'].form.fields['nodes'].queryset = Node.objects.filter(Q(categories__map__editors=request.user)|Q(categories__isnull=True)|Q(categories__map__isnull=True))
+            context['adminform'].form.fields['nodes'].queryset = Node.objects.filter(
+                Q(categories__map__editors=request.user) | Q(categories__isnull=True) | Q(categories__map__isnull=True))
         return super(CategoryAdmin, self).render_change_form(request, context, *args, **kwargs)
 
     def color(self, obj):
@@ -318,7 +321,7 @@ class NodeAdmin(SummernoteModelAdmin):
         if request.user and request.user.is_superuser:
             return super().get_queryset(request)
         else:
-            return super().get_queryset(request).filter(Q(categories__map__editors=request.user)|Q(categories__isnull=True)|Q(categories__map__isnull=True))
+            return super().get_queryset(request).filter(Q(categories__map__editors=request.user) | Q(categories__isnull=True) | Q(categories__map__isnull=True))
 
     def icone(self, obj):
         if obj.button_icon:
@@ -347,6 +350,19 @@ class NodeMappingAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             context['adminform'].form.fields['map'].queryset = Map.objects.filter(editors=request.user)
         return super(NodeMappingAdmin, self).render_change_form(request, context, *args, **kwargs)
+
+
+# Text to put at the end of each page's <title>.
+admin.site.site_title = _("Mapa da Informação")
+
+# Text to put in each page's <h1> (and above login form).
+admin.site.site_header = _("Administração do Portal do Mapa da Informação")
+
+# Text to put at the top of the admin index page.
+admin.site.index_title = _("Painel de controle do Mapa da Informação")
+
+if FRONTEND_URL is not None:
+    admin.site.site_url = FRONTEND_URL
 
 
 admin.site.register(Category, CategoryAdmin)
